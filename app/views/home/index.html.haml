@@ -1,0 +1,58 @@
+
+-if flash[:notice].present?
+  .row
+    .col-6.offset-3
+      .div.alert.alert-success
+        %span= flash[:notice]
+-elsif flash[:alert].present?
+  .row
+    .col-6.offset-3
+      .div.alert.alert-danger
+        %span= flash[:alert]
+
+-if current_user.is_admin
+  %h1.text-center.mt-5{style: 'font-size: 88px'} Admin Panel
+  %h1.text-center.mt-3 Stats
+  .row
+    .col-lg-4.offset-4
+      %table.table.table-bordered.table-hover
+        %thead.bg-warning
+          %tr
+            %th Name
+            %th No.# Messages
+        %tbody
+          -Channel.all.each do |channel|
+            %tr
+              %td= channel.name
+              %td= channel.messages.count
+-else
+  .row.mt-5
+    .col-3.offset-1
+      %h2.text-center Your Rooms
+      %ul.list-group#channels-list
+        -if @channels.present?
+          -@channels.each do |channel|
+            %li.list-group-item.list-group-item-action{ class: params[:channel_id].to_i == channel.id ? "active text-white" : '', id: "channel-#{channel.id}"}
+              = link_to channel.name, channel_messages_path(channel), class: params[:channel_id].to_i == channel.id ? "active text-white" : ''
+              %span.my-badge.bg-danger.float-right{ class: "#{params[:channel_id].to_i == channel.id ? "text-white" : ''} #{@notification_channel_ids.include?(channel.id) ? '' : 'hidden'}"}
+        -else
+          %span You do not have any channels now.
+
+-# .row
+-#   .col-4.offset-1
+-#     %h4 Rooms that you have subscribed
+-#     %ul.list-group
+-#       -if @channels.present?
+-#         -@channels.each do |channel|
+-#           %li.list-group-item.list-group-item-action
+-#             = link_to channel.name, channel_messages_path(channel)
+-#       -else
+-#         %span You do not have any channels now.
+  -# .col-4.offset-
+  -#   %h2 All Channels
+  -#   -if current_user.is_admin
+  -#     %ul.list-group
+  -#       -@all_channels.each do |channel|
+  -#         %li.list-group-item.list-group-item-action
+  -#           = link_to channel.name, add_new_user_channel_path(channel)
+

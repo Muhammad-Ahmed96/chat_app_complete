@@ -1,0 +1,17 @@
+%h1 Users of Room #{@channel.name}
+
+
+%table.table.table-bordered.table-hover
+  %thead.bg-primary.text-white
+    %tr
+      %th Name
+      %th{colspan: 1} Action
+  %tbody
+    -if @user.present?
+      -@users.each do |user|
+        %tr
+          %td= user.name
+          %td= link_to "Delete", remove_user_path(user,channel_id: @channel.id), method: :delete, data: { confirm: 'Are you sure?' }
+    -else
+      %tr
+        %td{colspan: 2}= "No Users present in this room"

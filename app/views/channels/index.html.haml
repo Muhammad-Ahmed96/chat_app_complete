@@ -1,0 +1,23 @@
+%h1 Rooms
+-if flash[:notice].present?
+  %div.alert.alert-success
+    %span=flash[:notice]
+-if flash[:alert].present?
+  %div.alert.alert-danger
+    %span=flash[:alert]
+=link_to "Create New Room", new_channel_path, class: 'btn btn-success'
+%table.table.table-bordered.table-hover
+  %thead.bg-danger.text-white
+    %tr
+      %th ID
+      %th Name
+      %th{colspan: 4} Actions
+  %tbody
+    -@channels.each do |channel|
+      %tr
+        %td= channel.id
+        %td= channel.name
+        %td= link_to "Edit", edit_channel_path(channel)
+        %td= link_to "Delete", channel_path(channel), method: :delete, data: { confirm: 'Are you sure?' }
+        %td= link_to "Go To Messages", channel_messages_path(channel)
+        %td= link_to "Show Users", channel_path(channel)

@@ -1,0 +1,38 @@
+
+-if flash[:notice].present?
+  .row
+    .col-6.offset-3
+      .div.alert.alert-success
+        %span= flash[:notice]
+-elsif flash[:alert].present?
+  .row
+    .col-6.offset-3
+      .div.alert.alert-danger
+        %span= flash[:alert]
+.row
+  .col-6
+    %h1 User Profile
+
+    %table.table.table-bordered.table-hover
+      %thead.thead-dark
+        %tr
+          %th Name
+          %td= @user.name
+        %tr
+          %th Email
+          %td= @user.email
+        %tr
+          %th Channels
+          %td= @channels.present? ? @channels.map(&:name).join(", ") : "Not subscribed to any channel. " 
+  .col-3.offset-1.border
+    %br
+    %br
+    %br
+    %h3.text-center Add to Room
+    =form_for(:user, url: add_to_channel_path) do |f|
+      .form-group
+        =f.label 'Select Room'
+        =f.select :channel_ids, options_for_select(Channel.all.map{|c| [c.name,c.id]}),{include_blank: 'Select Room'}, {class: 'form-control'}
+        =f.hidden_field :user_id, value: @user.id
+      .form-group.float-right
+        =f.submit "Add to Room", class: 'btn btn-dark'

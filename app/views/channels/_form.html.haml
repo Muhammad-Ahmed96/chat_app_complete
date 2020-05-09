@@ -1,0 +1,7 @@
+.row
+  .col-5.offset-1
+    =simple_form_for @channel do |f|
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: 'form-control'
+      =f.submit "#{@channel.new_record? ? 'Create' : 'Update'}", class: 'btn btn-primary'

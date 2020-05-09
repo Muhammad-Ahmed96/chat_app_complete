@@ -1,0 +1,21 @@
+
+.row
+  .col-4.offset-4.border.mt-2
+    -if flash.present?
+      .div.alert.alert-danger
+        %span= flash.first[1]
+
+
+    %h2.text-center Log in
+    = simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+      .form-group
+        =f.label :email
+        = f.input_field :email, class: 'form-control'
+      .form-group
+        =f.label :password
+        = f.input_field :password, class: 'form-control'
+      .form-group
+        = f.input :remember_me, as: :boolean if devise_mapping.rememberable?
+      .form-actions
+        = f.button :submit, "Log in"
+    = render "devise/shared/links"

@@ -1,0 +1,58 @@
+
+= hidden_field_tag 'user_idd', current_user.id
+= hidden_field_tag 'c_channel_id', @channel.id
+
+.row.mt-5
+  .col-3.offset-1
+    %h2.text-center Your Rooms
+    %ul.list-group#channels-list
+      -if @channels.present?
+        -@channels.each do |channel|
+          %li.list-group-item.list-group-item-action{ class: params[:channel_id].to_i == channel.id ? "active text-white" : '', id: "channel-#{channel.id}"}
+            = link_to channel.name, channel_messages_path(channel), class: params[:channel_id].to_i == channel.id ? "active text-white" : ''
+            %span.my-badge.bg-danger.float-right{ class: "#{params[:channel_id].to_i == channel.id ? "text-white" : ''} #{@notification_channel_ids.include?(channel.id) ? '' : 'hidden'}"}
+  .col-6
+    %h2.text-center #{@channel.name} Messages
+    .div.ml-5.border#chat{style: "padding: 0px !important"}
+      .chat_messages{style: "overflow: auto;height: 93%;overflow-x:hidden;width: 100%"}
+        -@messages.each do |message|
+          = render partial: 'message', locals: { message: message }
+      .bottom{style: "background: #eee;width: inherit;"}      
+        =simple_form_for [@channel ,@message], :html => { :style => "width:inherit;display:flex", :role => "form", remote: true, id: 'message_form'}  do |f|
+          =f.text_field :message, {class: 'form-control', style: 'width:90%;display:inline-block'}
+          -#  "", type: 'button', onclick: 'trigger_file()'
+          %button.btn.btn-parimary
+            =image_tag 'image.png', style: 'width:30px;height:30px', onclick: 'return trigger_file()'
+
+          =f.file_field :avatar,id: "file-btn", class: 'hidden'
+          =f.submit "send", class: 'hidden', id: "send_message"
+
+
+:javascript
+  var scrollToElement = function(el, ms){
+      var speed = (ms) ? ms : 600;
+      $('html,body').animate({
+          scrollTop: $(el).offset().top
+      }, speed);
+  }
+  function trigger_file(e){
+    $("#file-btn").click();
+    return false;
+  }
+  function scroll_bottom() {
+    if($(".chat_messages").length > 0 ){
+      $(".chat_messages").animate({ scrollTop: $('.chat_messages').prop("scrollHeight") }, 1000)
+    }
+  }
+  $(function () {
+    $('input[type="text"]').emoji({
+    });
+    $("#file-btn").change(function(){
+      $("#send_message").click();
+      $("#file-btn").val("");
+    });
+    scroll_bottom();
+    $("#message_form").bind("ajax:complete", function(event,xhr,status){
+      $('#message_message').val('');
+    });
+  })
